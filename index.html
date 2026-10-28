@@ -69,8 +69,8 @@
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     // ====== THAY 2 GIÁ TRỊ NÀY BẰNG THÔNG TIN DỰ ÁN CỦA EM ======
-    const SUPABASE_URL = 'PASTE_PROJECT_URL_HERE';
-    const SUPABASE_PUBLISHABLE_KEY = 'https://tsozbuirsobtjqvuoxhc.supabase.co';
+    const SUPABASE_URL = 'https://tsozbuirsobtjqvuoxhc.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_tPO1haMT9YIQwGNkXlX1WQ_eVfprysp';
     // ============================================================
     const BUCKET = 'class-documents';
     const MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -148,9 +148,13 @@
     ['searchInput','filterClass','filterSubject','sortSelect'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',renderDocuments));
     $('refreshBtn').addEventListener('click',loadDocuments);$('closePreview').addEventListener('click',()=>$('previewModal').classList.add('hidden'));$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))$('previewModal').classList.add('hidden')});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('previewModal').classList.add('hidden')});
 
-    if(SUPABASE_URL==='https://tsozbuirsobtjqvuoxhc.supabase.co'||SUPABASE_PUBLISHABLE_KEY==='sb_publishable_tPO1haMT9YIQwGNkXlX1WQ_eVfprysp'){
-      showAuth();notice('Cần điền Project URL và Publishable key vào hai dòng cấu hình trong mã trước khi đăng nhập hoạt động.','error');
-    }else{
+    if (
+  SUPABASE_URL === 'PASTE_PROJECT_URL_HERE' ||
+  SUPABASE_PUBLISHABLE_KEY === 'PASTE_PUBLISHABLE_KEY_HERE'
+) {
+  showAuth();
+  notice('Cần điền Project URL và Publishable key vào hai dòng cấu hình trong mã trước khi đăng nhập hoạt động.', 'error');
+} else {
       try{supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data:{session}}=await supabase.auth.getSession();if(session)showApp(session.user);else showAuth();supabase.auth.onAuthStateChange((_event,session)=>{if(session)showApp(session.user);else{currentUser=null;showAuth();}});}catch(err){showAuth();notice('Không khởi tạo được Supabase. Kiểm tra Project URL và Publishable key. '+err.message,'error');}
     }
   </script>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172554">
+  <title>EduShare — Kho tài liệu lớp học</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{color-scheme:light} body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f5f7fb;color:#172033}
+    .glass{background:rgba(255,255,255,.92);border:1px solid #e5eaf3;box-shadow:0 14px 40px rgba(30,50,90,.06)}
+    .field{width:100%;border:1px solid #dbe2ee;border-radius:12px;padding:11px 13px;background:white;outline:none}
+    .field:focus{border-color:#536dfe;box-shadow:0 0 0 3px rgba(83,109,254,.12)}
+    .btn{border-radius:12px;padding:11px 16px;font-weight:700;transition:.15s}
+    .btn-primary{background:#3348d8;color:white}.btn-primary:hover{background:#2639bd}.btn-soft{background:#edf1ff;color:#293dbf}.btn-danger{background:#fff0f0;color:#b42318}
+    .tag{display:inline-flex;align-items:center;border-radius:999px;background:#edf1ff;color:#293dbf;padding:4px 9px;font-size:12px;font-weight:700}
+    .hidden{display:none!important} .file-card{border:1px solid #e5eaf3;border-radius:16px;background:white;padding:16px;transition:.15s}.file-card:hover{border-color:#bbc7ff;transform:translateY(-1px)}
+  </style>
+</head>
+<body>
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-indigo-700 text-white grid place-items-center text-xl font-black">E</div><div><div class="font-extrabold text-xl tracking-tight">EduShare</div><div class="text-xs text-slate-500">Kho tài liệu học tập của lớp</div></div></div>
+      <div id="userBar" class="hidden items-center gap-3"><span id="userEmail" class="hidden sm:inline text-sm text-slate-600 max-w-52 truncate"></span><button id="logoutBtn" class="btn btn-soft">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <section class="mb-8 rounded-3xl bg-gradient-to-br from-indigo-950 via-blue-900 to-indigo-700 text-white p-7 sm:p-10 overflow-hidden relative">
+      <div class="relative z-10 max-w-2xl"><span class="text-xs uppercase tracking-[.22em] text-blue-200 font-bold">Learn • Share • Grow</span><h1 class="text-3xl sm:text-5xl font-black mt-3 leading-tight">Tài liệu tốt, học cùng nhau tốt hơn.</h1><p class="text-blue-100 mt-4 leading-relaxed">Tải lên và tìm tài liệu theo lớp, môn học, bài học. Đăng nhập để chia sẻ tài liệu với các bạn.</p></div>
+      <div class="absolute -right-12 -bottom-28 w-80 h-80 rounded-full border-[36px] border-white/10"></div><div class="absolute right-24 -top-20 w-44 h-44 rounded-full bg-cyan-300/10"></div>
+    </section>
+
+    <div id="notice" class="hidden mb-5 rounded-xl px-4 py-3 text-sm" role="status"></div>
+
+    <section id="authPanel" class="grid lg:grid-cols-2 gap-6 items-start">
+      <div class="glass rounded-3xl p-6 sm:p-8"><span class="tag">Chào mừng đến EduShare</span><h2 class="text-2xl font-extrabold mt-4">Đăng nhập tài khoản</h2><p class="text-slate-500 text-sm mt-2">Dùng email và mật khẩu đã đăng ký. Phiên đăng nhập được lưu để em không phải đăng nhập lại mỗi lần mở trang.</p>
+        <form id="loginForm" class="space-y-4 mt-6"><div><label class="block text-sm font-semibold mb-1.5" for="loginEmail">Email</label><input class="field" id="loginEmail" type="email" autocomplete="email" required placeholder="ten@email.com"></div><div><label class="block text-sm font-semibold mb-1.5" for="loginPassword">Mật khẩu</label><input class="field" id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="Nhập mật khẩu"></div><button class="btn btn-primary w-full" type="submit">Đăng nhập</button></form>
+      </div>
+      <div class="glass rounded-3xl p-6 sm:p-8"><h2 class="text-2xl font-extrabold">Tạo tài khoản mới</h2><p class="text-slate-500 text-sm mt-2">Mỗi bạn đăng ký bằng email riêng. Nếu Supabase yêu cầu xác nhận email, hãy mở email để xác nhận trước khi đăng nhập.</p>
+        <form id="signupForm" class="space-y-4 mt-6"><div><label class="block text-sm font-semibold mb-1.5" for="signupEmail">Email</label><input class="field" id="signupEmail" type="email" autocomplete="email" required placeholder="ten@email.com"></div><div><label class="block text-sm font-semibold mb-1.5" for="signupPassword">Tạo mật khẩu</label><input class="field" id="signupPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Ít nhất 6 ký tự"></div><div><label class="block text-sm font-semibold mb-1.5" for="signupPassword2">Nhập lại mật khẩu</label><input class="field" id="signupPassword2" type="password" autocomplete="new-password" required minlength="6" placeholder="Nhập lại mật khẩu"></div><button class="btn btn-soft w-full" type="submit">Đăng ký tài khoản</button></form>
+      </div>
+    </section>
+
+    <section id="appPanel" class="hidden space-y-7">
+      <div class="grid xl:grid-cols-[.9fr_1.1fr] gap-6 items-start">
+        <div class="glass rounded-3xl p-6"><div class="flex items-center justify-between gap-3"><div><h2 class="text-xl font-extrabold">Đăng tài liệu mới</h2><p class="text-sm text-slate-500 mt-1">Các bạn đã đăng nhập có thể xem tài liệu chung.</p></div><span class="tag">Upload</span></div>
+          <form id="uploadForm" class="space-y-4 mt-5"><div><label class="block text-sm font-semibold mb-1.5" for="docTitle">Tên tài liệu *</label><input id="docTitle" class="field" required maxlength="140" placeholder="Ví dụ: Đề cương ôn tập giữa kỳ"></div>
+            <div class="grid sm:grid-cols-2 gap-4"><div><label class="block text-sm font-semibold mb-1.5" for="docClass">Lớp *</label><input id="docClass" class="field" required maxlength="40" placeholder="Ví dụ: 10A12"></div><div><label class="block text-sm font-semibold mb-1.5" for="docSubject">Môn học *</label><input id="docSubject" class="field" required maxlength="80" placeholder="Ví dụ: Vật lí"></div></div>
+            <div><label class="block text-sm font-semibold mb-1.5" for="docLesson">Bài / chủ đề</label><input id="docLesson" class="field" maxlength="120" placeholder="Ví dụ: Bài 4 — Chuyển động"></div>
+            <div><label class="block text-sm font-semibold mb-1.5" for="docDescription">Mô tả</label><textarea id="docDescription" class="field" rows="2" maxlength="500" placeholder="Ghi chú ngắn về tài liệu..."></textarea></div>
+            <div><label class="block text-sm font-semibold mb-1.5" for="docFile">Chọn tệp *</label><input id="docFile" class="field" type="file" required accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.png,.jpg,.jpeg,.webp"><p class="text-xs text-slate-500 mt-1.5">PDF, Office, TXT hoặc ảnh. Giới hạn bản mẫu: 20 MB mỗi tệp.</p></div>
+            <button id="uploadBtn" class="btn btn-primary w-full" type="submit">Tải tài liệu lên</button>
+          </form>
+        </div>
+        <div class="glass rounded-3xl p-6"><div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4"><div><h2 class="text-xl font-extrabold">Thư viện tài liệu</h2><p class="text-sm text-slate-500 mt-1">Tìm theo tên, lớp, môn hoặc bài học.</p></div><button id="refreshBtn" class="btn btn-soft">Làm mới</button></div>
+          <div class="grid sm:grid-cols-2 gap-3 mt-5"><input id="searchInput" class="field" placeholder="Tìm tài liệu..." aria-label="Tìm tài liệu"><select id="filterClass" class="field" aria-label="Lọc theo lớp"><option value="">Tất cả lớp</option></select><select id="filterSubject" class="field" aria-label="Lọc theo môn"><option value="">Tất cả môn</option></select><select id="sortSelect" class="field" aria-label="Sắp xếp"><option value="newest">Mới nhất trước</option><option value="oldest">Cũ nhất trước</option></select></div>
+          <div id="docCount" class="text-xs text-slate-500 mt-4"></div><div id="documentsList" class="grid md:grid-cols-2 gap-3 mt-3"><div class="text-sm text-slate-500">Đang tải tài liệu...</div></div>
+        </div>
+      </div>
+      <div class="text-xs text-slate-500">EduShare là kho dùng chung cho lớp. Chỉ tải lên tài liệu học tập mà em có quyền chia sẻ.</div>
+    </section>
+  </main>
+
+  <div id="previewModal" class="hidden fixed inset-0 z-50 bg-slate-950/70 p-3 sm:p-8 overflow-auto"><div class="max-w-5xl mx-auto bg-white rounded-2xl min-h-[60vh] overflow-hidden"><div class="flex items-center justify-between gap-3 p-4 border-b"><div><div id="previewTitle" class="font-bold"></div><div id="previewMeta" class="text-xs text-slate-500 mt-1"></div></div><button id="closePreview" class="btn btn-soft">Đóng</button></div><div id="previewBody" class="p-4 sm:p-6"></div></div></div>
+  <footer class="text-center text-xs text-slate-400 py-8">EduShare · Chia sẻ tri thức, cùng nhau tiến bộ</footer>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // ====== THAY 2 GIÁ TRỊ NÀY BẰNG THÔNG TIN DỰ ÁN CỦA EM ======
+    const SUPABASE_URL = 'PASTE_PROJECT_URL_HERE';
+    const SUPABASE_PUBLISHABLE_KEY = 'https://tsozbuirsobtjqvuoxhc.supabase.co';
+    // ============================================================
+    const BUCKET = 'class-documents';
+    const MAX_FILE_BYTES = 20 * 1024 * 1024;
+    const $ = (id) => document.getElementById(id);
+    let supabase = null;
+    let currentUser = null;
+    let allDocs = [];
+
+    function notice(message, type='info') {
+      const el = $('notice'); el.textContent = message; el.classList.remove('hidden');
+      el.className = 'mb-5 rounded-xl px-4 py-3 text-sm';
+      el.classList.add(type === 'error' ? 'bg-red-50 text-red-700 border','border-red-200' : type === 'success' ? 'bg-emerald-50 text-emerald-800 border','border-emerald-200' : 'bg-blue-50 text-blue-800 border','border-blue-200');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function clearNotice(){ $('notice').classList.add('hidden'); }
+    function showAuth(){ $('authPanel').classList.remove('hidden'); $('appPanel').classList.add('hidden'); $('userBar').classList.add('hidden'); $('userBar').classList.remove('flex'); }
+    function showApp(user){ currentUser=user; $('authPanel').classList.add('hidden'); $('appPanel').classList.remove('hidden'); $('userBar').classList.remove('hidden'); $('userBar').classList.add('flex'); $('userEmail').textContent=user.email || 'Đã đăng nhập'; loadDocuments(); }
+    function humanSize(n){ if(!Number.isFinite(Number(n)))return ''; const units=['B','KB','MB','GB']; let i=0,v=Number(n); while(v>=1024&&i<units.length-1){v/=1024;i++} return `${v.toFixed(i===0?0:1)} ${units[i]}`; }
+    function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function dateText(s){try{return new Date(s).toLocaleString('vi-VN',{dateStyle:'medium',timeStyle:'short'})}catch{return ''}}
+    function uniqueValues(key){return [...new Set(allDocs.map(d=>d[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'))}
+    function fillFilter(id,key,label){const select=$(id),old=select.value;select.innerHTML=`<option value="">${label}</option>`+uniqueValues(key).map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');if([...select.options].some(o=>o.value===old))select.value=old;}
+
+    async function loadDocuments(){
+      $('documentsList').innerHTML='<div class="text-sm text-slate-500">Đang tải tài liệu...</div>';
+      const {data,error}=await supabase.from('documents').select('*').order('created_at',{ascending:false});
+      if(error){$('documentsList').innerHTML='';notice('Không tải được danh sách: '+error.message,'error');return;}
+      allDocs=data||[]; fillFilter('filterClass','class_name','Tất cả lớp'); fillFilter('filterSubject','subject','Tất cả môn'); renderDocuments();
+    }
+    function renderDocuments(){
+      const q=$('searchInput').value.trim().toLocaleLowerCase('vi'), cls=$('filterClass').value, sub=$('filterSubject').value, sort=$('sortSelect').value;
+      let docs=allDocs.filter(d=>(!cls||d.class_name===cls)&&(!sub||d.subject===sub)&&(!q||[d.title,d.description,d.class_name,d.subject,d.lesson,d.file_name].some(x=>(x||'').toLocaleLowerCase('vi').includes(q))));
+      docs.sort((a,b)=>sort==='oldest'?new Date(a.created_at)-new Date(b.created_at):new Date(b.created_at)-new Date(a.created_at)); $('docCount').textContent=`Hiển thị ${docs.length} / ${allDocs.length} tài liệu`;
+      if(!docs.length){$('documentsList').innerHTML='<div class="md:col-span-2 rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">Chưa có tài liệu phù hợp. Em có thể tải tài liệu đầu tiên lên.</div>';return;}
+      $('documentsList').innerHTML=docs.map(d=>`<article class="file-card"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><h3 class="font-bold break-words">${escapeHtml(d.title)}</h3><p class="text-xs text-slate-500 mt-1 break-all">${escapeHtml(d.file_name||'')}</p></div><span class="tag shrink-0">${escapeHtml(d.subject||'Khác')}</span></div><div class="flex flex-wrap gap-1.5 mt-3"><span class="tag">${escapeHtml(d.class_name||'Chưa rõ lớp')}</span>${d.lesson?`<span class="tag">${escapeHtml(d.lesson)}</span>`:''}</div>${d.description?`<p class="text-sm text-slate-600 mt-3 break-words">${escapeHtml(d.description)}</p>`:''}<div class="text-xs text-slate-400 mt-3">${humanSize(d.file_size)} · ${dateText(d.created_at)}</div><div class="flex gap-2 mt-4"><button class="btn btn-soft flex-1" data-preview="${d.id}">Xem / tải</button>${d.uploaded_by===currentUser.id?`<button class="btn btn-danger" data-delete="${d.id}" title="Xóa tài liệu">Xóa</button>`:''}</div></article>`).join('');
+      $('documentsList').querySelectorAll('[data-preview]').forEach(b=>b.addEventListener('click',()=>previewDocument(b.dataset.preview)));
+      $('documentsList').querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>deleteDocument(b.dataset.delete)));
+    }
+    async function previewDocument(id){
+      const d=allDocs.find(x=>x.id===id);if(!d)return;
+      const {data,error}=await supabase.storage.from(BUCKET).createSignedUrl(d.file_path,300);
+      if(error){notice('Không mở được tệp: '+error.message,'error');return;}
+      const url=data.signedUrl; $('previewTitle').textContent=d.title; $('previewMeta').textContent=`${d.file_name} · ${humanSize(d.file_size)}`;
+      const ext=(d.file_name||'').split('.').pop().toLowerCase();let content='';
+      if(['png','jpg','jpeg','webp'].includes(ext))content=`<img src="${url}" alt="${escapeHtml(d.title)}" class="max-w-full max-h-[70vh] mx-auto rounded-xl">`;
+      else if(ext==='pdf')content=`<iframe src="${url}" title="${escapeHtml(d.title)}" class="w-full h-[70vh] border rounded-xl"></iframe>`;
+      else if(ext==='txt') {try{const r=await fetch(url);const t=await r.text();content=`<pre class="whitespace-pre-wrap break-words text-sm bg-slate-50 p-4 rounded-xl max-h-[65vh] overflow-auto">${escapeHtml(t)}</pre>`;}catch{content='';}}
+      if(!content)content='<p class="text-sm text-slate-600">Trình duyệt không xem trước định dạng này. Em hãy tải tệp xuống để mở bằng ứng dụng phù hợp.</p>';
+      $('previewBody').innerHTML=content+`<div class="mt-4"><a href="${url}" target="_blank" rel="noopener" download="${escapeHtml(d.file_name)}" class="btn btn-primary inline-block">Tải xuống / mở tệp</a></div>`;
+      $('previewModal').classList.remove('hidden');
+    }
+    async function deleteDocument(id){
+      const d=allDocs.find(x=>x.id===id);if(!d||d.uploaded_by!==currentUser.id)return;
+      if(!confirm(`Xóa tài liệu “${d.title}” khỏi kho chung?`))return;
+      const {error:storageError}=await supabase.storage.from(BUCKET).remove([d.file_path]);
+      if(storageError){notice('Chưa xóa được tệp: '+storageError.message,'error');return;}
+      const {error}=await supabase.from('documents').delete().eq('id',id);
+      if(error){notice('Tệp đã xóa nhưng chưa xóa được thông tin: '+error.message,'error');return;}
+      notice('Đã xóa tài liệu.','success');await loadDocuments();
+    }
+
+    $('loginForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice();const btn=e.submitter;btn.disabled=true;btn.textContent='Đang đăng nhập...';const email=$('loginEmail').value.trim(),password=$('loginPassword').value;const {data,error}=await supabase.auth.signInWithPassword({email,password});btn.disabled=false;btn.textContent='Đăng nhập';if(error){notice('Đăng nhập chưa thành công: '+error.message,'error');return;}notice('Đăng nhập thành công!','success');showApp(data.user);});
+    $('signupForm').addEventListener('submit',async e=>{e.preventDefault();clearNotice();const password=$('signupPassword').value;if(password!==$('signupPassword2').value){notice('Hai mật khẩu chưa khớp. Em kiểm tra lại nhé.','error');return;}const btn=e.submitter;btn.disabled=true;btn.textContent='Đang tạo tài khoản...';const {data,error}=await supabase.auth.signUp({email:$('signupEmail').value.trim(),password});btn.disabled=false;btn.textContent='Đăng ký tài khoản';if(error){notice('Đăng ký chưa thành công: '+error.message,'error');return;}if(data.session){notice('Đã tạo tài khoản và đăng nhập thành công.','success');showApp(data.user);}else{notice('Đã gửi yêu cầu đăng ký. Nếu dự án yêu cầu xác nhận email, em hãy mở hộp thư để xác nhận rồi đăng nhập.','success');$('signupForm').reset();}});
+    $('logoutBtn').addEventListener('click',async()=>{const {error}=await supabase.auth.signOut();if(error){notice('Đăng xuất chưa thành công: '+error.message,'error');return;}currentUser=null;showAuth();notice('Em đã đăng xuất.','success');});
+    $('uploadForm').addEventListener('submit',async e=>{
+      e.preventDefault();clearNotice();const file=$('docFile').files[0];if(!file){notice('Em hãy chọn tệp trước.','error');return;}if(file.size>MAX_FILE_BYTES){notice('Tệp lớn hơn 20 MB. Hãy chọn tệp nhỏ hơn.','error');return;}
+      const btn=$('uploadBtn');btn.disabled=true;btn.textContent='Đang tải lên...';const safeName=file.name.replace(/[^\p{L}\p{N}._-]+/gu,'_');const path=`${currentUser.id}/${crypto.randomUUID()}-${safeName}`;
+      const {error:uploadError}=await supabase.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});
+      if(uploadError){btn.disabled=false;btn.textContent='Tải tài liệu lên';notice('Tải tệp thất bại: '+uploadError.message,'error');return;}
+      const record={title:$('docTitle').value.trim(),description:$('docDescription').value.trim(),class_name:$('docClass').value.trim(),subject:$('docSubject').value.trim(),lesson:$('docLesson').value.trim(),file_path:path,file_name:file.name,file_size:file.size,uploaded_by:currentUser.id};
+      const {error:dbError}=await supabase.from('documents').insert(record);
+      if(dbError){await supabase.storage.from(BUCKET).remove([path]);btn.disabled=false;btn.textContent='Tải tài liệu lên';notice('Tệp chưa được thêm vào thư viện: '+dbError.message,'error');return;}
+      $('uploadForm').reset();btn.disabled=false;btn.textContent='Tải tài liệu lên';notice('Đã tải tài liệu lên thành công!','success');await loadDocuments();
+    });
+    ['searchInput','filterClass','filterSubject','sortSelect'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',renderDocuments));
+    $('refreshBtn').addEventListener('click',loadDocuments);$('closePreview').addEventListener('click',()=>$('previewModal').classList.add('hidden'));$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))$('previewModal').classList.add('hidden')});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('previewModal').classList.add('hidden')});
+
+    if(SUPABASE_URL==='https://tsozbuirsobtjqvuoxhc.supabase.co'||SUPABASE_PUBLISHABLE_KEY==='sb_publishable_tPO1haMT9YIQwGNkXlX1WQ_eVfprysp'){
+      showAuth();notice('Cần điền Project URL và Publishable key vào hai dòng cấu hình trong mã trước khi đăng nhập hoạt động.','error');
+    }else{
+      try{supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data:{session}}=await supabase.auth.getSession();if(session)showApp(session.user);else showAuth();supabase.auth.onAuthStateChange((_event,session)=>{if(session)showApp(session.user);else{currentUser=null;showAuth();}});}catch(err){showAuth();notice('Không khởi tạo được Supabase. Kiểm tra Project URL và Publishable key. '+err.message,'error');}
+    }
+  </script>
+</body>
+</html>
